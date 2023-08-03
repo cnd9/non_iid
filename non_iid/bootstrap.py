@@ -21,9 +21,11 @@ class Bootstrap:
         self.bootstrap_samples = boots
         return [func(bs) for bs in boots]
 
-    def block_bootstramp(self, df, b, n_dims=1, dcol='value', icol=['uid'], func=lambda x: x):
+    def block_bootstrap(self, df, b, n_dims=1, dcol='value', icol=['uid'], func=lambda x: x):
         if len(icol) != n_dims:
             raise Exception('Cluster index indicators must have length of n_dims')
+        if any(i not in df.columns for i in icol + [dcol]):
+            raise Exception('Input dataframe must contain indicated data column and index column(s)')
         boots = []
         group_df = df.groupby(icol).agg({dcol: lambda x: list(x)}).reset_index()
         values = group_df[dcol].values
